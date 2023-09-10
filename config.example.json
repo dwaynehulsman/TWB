@@ -7,7 +7,12 @@
   "server": {
     "server": "nlc1",
     "endpoint": "https://nlc1.tribalwars.nl/game.php",
-    "server_on_twplus": false
+    "login_endpoint": "https://tribalwars.nl/",
+    "world": "nl1",
+    "username": "harry",
+    "password": "harry",
+    "server_on_twplus": false,
+    "2capthca_api_key": null
   },
   "reporting": {
     "enabled": false,

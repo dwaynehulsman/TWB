@@ -2,3 +2,5 @@ requests
 coloredlogs
 psutil
 flask
+playwright
+2captcha-python

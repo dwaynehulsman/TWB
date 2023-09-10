@@ -10,6 +10,7 @@ import random
 import json
 import os
 from core.reporter import ReporterObject
+from .login import login_and_navigate
 
 
 class WebWrapper:
@@ -49,6 +50,13 @@ class WebWrapper:
             self.last_h = get_h.group(1)
 
     def get_url(self, url, headers=None):
+        config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+    
+        with open(config_path) as f:
+            config = json.load(f)
+        
+        capthca_api_key = config['server']['2capthca_api_key']
+        
         self.headers['Origin'] = (self.endpoint if self.endpoint else self.auth_endpoint).rstrip('/')
         if not self.priority_mode:
             time.sleep(random.randint(int(3 * self.delay), int(7 * self.delay)))
@@ -62,8 +70,12 @@ class WebWrapper:
             if 'data-bot-protect="forced"' in res.text:
                 self.logger.warning("Bot protection hit! cannot continue")
                 self.reporter.report(0, "TWB_RECAPTCHA", "Stopping bot, press any key once captcha has been solved")
+                if capthca_api_key:
+                    self.start()
+                    return
                 input("Press any key...")
                 return self.get_url(url, headers)
+
             return res
         except Exception as e:
             self.logger.warning("GET %s: %s" % (url, str(e)))
@@ -87,6 +99,12 @@ class WebWrapper:
             return None
 
     def start(self, ):
+        config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+    
+        with open(config_path) as f:
+            config = json.load(f)
+        
+        capthca_api_key = config['server']['2capthca_api_key']
         session_file = os.path.join(os.path.dirname(__file__), "..", "cache", "session.json")
         if os.path.exists(session_file):
             with open(session_file) as f:
@@ -98,15 +116,21 @@ class WebWrapper:
                 else:
                     self.logger.warning("Current session cache not valid")
         self.web.cookies.clear()
-        cinp = input("Enter browser cookie string> ")
+       
         cookies = {}
-        cinp = cinp.strip()
-        for itt in cinp.split(';'):
-            itt = itt.strip()
-            kvs = itt.split("=")
-            k = kvs[0]
-            v = '='.join(kvs[1:])
-            cookies[k] = v
+        if capthca_api_key:
+            cookies = login_and_navigate()
+        else: 
+            cinp = input("Enter browser cookie string> ")
+        
+            cinp = cinp.strip()
+            for itt in cinp.split(';'):
+                itt = itt.strip()
+                kvs = itt.split("=")
+                k = kvs[0]
+                v = '='.join(kvs[1:])
+                cookies[k] = v
+       
         self.web.cookies.update(cookies)
         self.logger.info("Game Endpoint: %s" % self.endpoint)
 
@@ -120,7 +144,6 @@ class WebWrapper:
                 'cookies': cookies
             }
             json.dump(session, f)
-
     def get_action(self, village_id, action):
         url = "game.php?village=%s&screen=%s" % (village_id, action)
         response = self.get_url(url)
