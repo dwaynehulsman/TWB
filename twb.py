@@ -323,10 +323,18 @@ class TWB:
                         )
                     vnum += 1
 
-                if len(defense_states) and config["farms"]["farm"]:
+                if len(defense_states) and config["farms"].get("farm", False):
                     for vil in self.villages:
                         print("Syncing attack states")
-                        vil.def_man.my_other_villages = defense_states
+
+                        # Safely get the attribute, if it's not present, set it to None
+                        current_states = getattr(vil.def_man, "my_other_villages", None)
+
+                        # Perform your operations on current_states, like merging it with defense_states if needed
+                        # ...
+
+                        # Safely set the attribute
+                        setattr(vil.def_man, "my_other_villages", defense_states)
 
                 sleep = 0
                 active_h = [int(x) for x in config["bot"]["active_hours"].split("-")]
