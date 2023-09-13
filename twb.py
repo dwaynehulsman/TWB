@@ -326,7 +326,8 @@ class TWB:
                 if len(defense_states) and config["farms"]["farm"]:
                     for vil in self.villages:
                         print("Syncing attack states")
-                        vil.def_man.my_other_villages = defense_states
+                        if vil.def_man:
+                            vil.def_man.my_other_villages = defense_states
 
                 sleep = 0
                 active_h = [int(x) for x in config["bot"]["active_hours"].split("-")]
