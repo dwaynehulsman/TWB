@@ -16,6 +16,8 @@ from core.request import WebWrapper
 from game.village import Village
 from manager import VillageManager
 
+from core.verify_bot import verify_bot
+
 coloredlogs.install(
     level=logging.DEBUG if "-q" not in sys.argv else logging.INFO,
     fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -379,5 +381,7 @@ for x in range(3):
     except Exception as e:
         t.wrapper.reporter.report(0, "TWB_EXCEPTION", str(e))
         print("I crashed :(   %s" % str(e))
+        print("Attempting verify bot")
+        verify_bot()
         traceback.print_exc()
         pass

@@ -9,6 +9,7 @@
     "endpoint": "https://nlc1.tribalwars.nl/game.php",
     "login_endpoint": "https://tribalwars.nl/",
     "world": "nl1",
+    "site_extension": ".nl",
     "username": "harry",
     "password": "harry",
     "server_on_twplus": false,
